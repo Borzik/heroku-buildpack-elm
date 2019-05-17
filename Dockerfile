@@ -3,17 +3,18 @@
 
 FROM heroku/cedar
 
-RUN apt-get -qy update && apt-get -y install npm nodejs-legacy
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash
+RUN apt-get install -y nodejs
 ENV PATH /app/bin:$PATH
 WORKDIR /tmp
 
 
 # Install Elm
-ENV ELM_VERSION 0.18.0
+ENV ELM_VERSION 0.19.0
 
-RUN npm install -g elm@${ELM_VERSION}
+RUN npm install -g elm@${ELM_VERSION} --unsafe-perm=true --allow-root
 RUN mkdir -p /app/.profile.d /app/bin
-RUN cp /usr/local/lib/node_modules/elm/Elm-Platform/${ELM_VERSION}/.cabal-sandbox/bin/* /app/bin
+RUN cp /usr/lib/node_modules/elm/bin/* /app/bin
 
 # Startup scripts for heroku
 RUN echo "export PATH=\"/app/bin:\$PATH\"" > /app/.profile.d/appbin.sh
